@@ -1,24 +1,26 @@
+# preparing
 FROM node:15.3.0-alpine3.10 as build
 
 WORKDIR /app
 
-COPY package*.json ./
-RUN npm ci --also=dev 
+COPY src \
+     package*.json \
+     nest-cli.json \
+     tsconfig*.json ./
 
-# build
-COPY . .
-RUN npm run build
+RUN npm ci --also=dev
+RUN npm run build 
+RUN npm prune --production
 
-#2
+# go
 FROM node:15.3.0-alpine3.10 
 
 ARG NODE_ENV=production
 ENV NODE_ENV $NODE_ENV
 
-COPY --from=build /app/package*.json ./
-RUN npm ci --only production && npm install pm2 -g
+RUN npm install pm2 -g
 
-COPY --from=build ./app/dist /dist/
+COPY --from=build ./app .
 
 USER node
 ENV PORT=8080
