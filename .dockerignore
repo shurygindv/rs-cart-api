@@ -1,0 +1,10 @@
+dist
+test
+node_modules
+.git
+.gitignore
+.eslintrc.js
+npm-debug.log
+.prettierrc
+Dockerfile*
+README.md
